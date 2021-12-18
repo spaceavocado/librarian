@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "ES2019"
+    ],
+    "target": "ES2019",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "declarationDir": "types",
+    "declaration": true,
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true
+  },
+  "testMatch": [
+    "**/__test__/**/*.ts"
+  ],
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "src/__test__",
+    "src/**/*.test.ts"
+  ]
+}
