@@ -23,7 +23,6 @@ export const probe = (evaluable: Evaluable) => ({
     const result = evaluable.evaluate(context, (evaluable, result) => {
       evaluationMap[evaluable.id] = result
     })
-    console.log(evaluationMap)
     return [result, combine(evaluable, evaluationMap)]
   },
 })
