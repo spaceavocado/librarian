@@ -1,12 +1,4 @@
 import { Evaluable } from './core';
-export declare const TERM_START = "\"";
-export declare const TERM_END = "\"";
-export declare const SCOPE_START = "(";
-export declare const SCOPE_END = ")";
-export declare const ESCAPE_CHAR = "\\";
-export declare const AND_OPERATOR = "AND";
-export declare const OR_OPERATOR = "OR";
-export declare const NOT_OPERATOR = "NOT";
 export declare const readOperatorBuffer: (buffer: string | null, char: string) => string | null;
 export declare const setExclusiveOperator: (exclusive: boolean) => (previous: string | undefined, pending: string) => string | undefined;
 declare type Combine = (operands: Evaluable[]) => Evaluable;
