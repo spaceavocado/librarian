@@ -2,9 +2,11 @@
 
 A micro search library leveraging [Boolean Operators](https://library.alliant.edu/screens/boolean.pdf), supporting [wildcard](https://apus.libanswers.com/faq/2235) annotation within search terms.
 
-> Revision: Dec 17, 2021.
+> Revision: Dec 20, 2021.
 
 ## Installation
+
+Npm package: [@spaceavocado/librarian](https://www.npmjs.com/package/@spaceavocado/librarian).
 
 ```sh
 npm install @spaceavocado/librarian
@@ -13,7 +15,7 @@ yarn add @spaceavocado/librarian
 
 > The library is being build as **CommonJS** module and **ESM**.
 
-## Usage
+## Basic Usage
 
 An evaluable search expression could be created directly from the evaluable core expression functions or parsed from the raw expression input.
 
@@ -30,8 +32,8 @@ const result1 = search("Christie visited the New York's city center last week.")
 
 // The result1 contains a collection of librarian.Match results
 ;[
-  { match: 'center', index: 37, length: 6 },
-  { match: 'New York', index: 21, length: 8 },
+  { match: 'center', term: 'cent??', index: 37, length: 6 },
+  { match: 'New York', term: 'new york', index: 21, length: 8 },
 ]
 
 // Perform an search
@@ -59,8 +61,8 @@ const result1 = search("Christie visited the New York's city center last week.")
 
 // The result1 contains a collection of librarian.Match results
 ;[
-  { match: 'center', index: 37, length: 6 },
-  { match: 'New York', index: 21, length: 8 },
+  { match: 'center', term: 'cent??', index: 37, length: 6 },
+  { match: 'New York', term: 'new york', index: 21, length: 8 },
 ]
 
 // Perform an search
@@ -82,7 +84,7 @@ const expression1 = and(
   or(term('new york'), term('berlin'))
 ).toString()
 
-const expression2 = parse('"cent??" AND ("new york" OR "berlin")')
+const expression2 = parse('"cent??" AND ("new york" OR "berlin")').toString()
 
 // The literal form of the expression1
 ;('("cent?? AND ("new york" OR "berlin")")')
@@ -275,6 +277,81 @@ The search expressions could be nested without any limitation. E.g.: `"animal" A
 ## Case Insensitivity
 
 The search terms are not case sensitive. i.e. `"cat"` finds `cat`, `Cat` and/or `CAT`.
+
+## Evaluation Probe
+
+Probe captures provides information about the whole expression evaluation tree.
+
+```ts
+import { parse, term, and, or } from '@spaceavocado/librarian'
+
+const expression = and(
+  term('cent??'),
+  or(term('new york'), term('berlin'))
+)
+
+const search = probe(expression).evaluate
+
+// Perform an search with probe data
+const [result1, probeData1] = search("Christie visited the New York's city center last week.")
+
+// The result1 contains a collection of librarian.Match results
+;[
+  { match: 'center', term: 'cent??', index: 37, length: 6 },
+  { match: 'New York', term: 'new york', index: 21, length: 8 },
+]
+
+// The probeData1 contains librarian.ProbeResult
+;{
+  id: Symbol(and),
+  toString: [Function: toString],
+  evaluate: [Function: evaluate],
+  result: [
+    { term: 'cent??', match: 'center', index: 37, length: 6 },
+    { term: 'new york', match: 'New York', index: 21, length: 8 }
+  ],
+  descendants: [
+    {
+      id: Symbol(term),
+      toString: [Function: toString],
+      evaluate: [Function: evaluate],
+      result: [
+        { term: 'cent??', match: 'center', index: 37, length: 6 }
+      ],
+      descendants: []
+    },
+    {
+      id: Symbol(or),
+      toString: [Function: toString],
+      evaluate: [Function: evaluate],
+      result: [
+        { term: 'new york', match: 'New York', index: 21, length: 8 }
+      ],
+      descendants: [
+        {
+          id: Symbol(term),
+          toString: [Function: toString],
+          evaluate: [Function: evaluate],
+          result: [
+            { term: 'new york', match: 'New York', index: 21, length: 8 }
+          ],
+          descendants: []
+        },
+        {
+          id: Symbol(term),
+          toString: [Function: toString],
+          evaluate: [Function: evaluate],
+          descendants: []
+        }
+      ],
+    }
+  ]
+}
+```
+
+- `result: Array` = The expression has been evaluated positively with given captured evaluation results.
+- `result: false` = The expression has been evaluated negatively.
+- `result: undefined` = The has not been evaluated, i.e this expression branch has not been needed to be evaluated.
 
 ---
 
