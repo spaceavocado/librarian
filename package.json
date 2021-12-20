@@ -1,6 +1,6 @@
 {
   "name": "@spaceavocado/librarian",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "A micro search library leveraging Boolean Operators, supporting Wildcard annotation within search terms.",
   "main": "lib/librarian.js",
   "module": "lib/librarian.esm.js",
@@ -23,6 +23,7 @@
     "build:js": "rollup -c",
     "build": "npm run build:types && npm run build:js",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "lint": "eslint --max-warnings 0 \"src/**/*.{ts,js}\"",
     "lint:fix": "eslint --max-warnings 0 \"src/**/*.{ts,js}\" --fix",
     "prepublishOnly": "npm run test && npm run build",

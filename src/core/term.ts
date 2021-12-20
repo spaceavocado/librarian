@@ -1,5 +1,5 @@
-import { pipe, replace } from '../internal'
-import { Evaluable } from '.'
+import { identity, pipe, replace, tap } from '../internal'
+import { Evaluable } from './Evaluable'
 import { Match } from './Match'
 
 export const isAdvancedTerm = (term: string): boolean =>
@@ -35,6 +35,7 @@ export const plainTerm =
         }
 
         matches.push({
+          term,
           match: context.slice(index, index + term.length),
           index,
           length: term.length,
@@ -58,9 +59,10 @@ export const advancedTerm =
         }
 
         matches.push({
+          term,
+          match: match[0],
           index: match.index,
           length: match[0].length,
-          match: match[0],
         })
       }
 
@@ -82,7 +84,17 @@ export const advancedTerm =
  * For example, searching for colo?r would return both color and colour.
  * - (?) matches any character (except for line terminators)
  */
-export const term = (term: string): Evaluable => ({
-  toString: () => `"${term}"`,
-  evaluate: isAdvancedTerm(term) ? advancedTerm(term) : plainTerm(term),
-})
+export const term = (term: string): Evaluable =>
+  ((id, evaluate) => ({
+    id,
+    toString: (format) => (format ? format(term) : `"${term}"`),
+    evaluate: function (context, onEvaluation) {
+      return pipe(
+        evaluate,
+        onEvaluation ? tap((result) => onEvaluation(this, result)) : identity
+      )(context)
+    },
+  }))(
+    Symbol('term'),
+    isAdvancedTerm(term) ? advancedTerm(term) : plainTerm(term)
+  )
