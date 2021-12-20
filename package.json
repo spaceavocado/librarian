@@ -1,6 +1,6 @@
 {
   "name": "@spaceavocado/librarian",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A micro search library leveraging Boolean Operators, supporting Wildcard annotation within search terms.",
   "main": "lib/librarian.js",
   "module": "lib/librarian.esm.js",
@@ -8,7 +8,9 @@
   "files": [
     "/lib",
     "/types",
-    "changelog.md"
+    "changelog.md",
+    "readme.md",
+    "license.txt"
   ],
   "author": {
     "name": "David Horak",
