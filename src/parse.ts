@@ -1,14 +1,14 @@
 import { and, Evaluable, not, or, term } from './core'
 import { identity } from './internal'
 
-export const TERM_START = '"'
-export const TERM_END = '"'
-export const SCOPE_START = '('
-export const SCOPE_END = ')'
-export const ESCAPE_CHAR = '\\'
-export const AND_OPERATOR = 'AND'
-export const OR_OPERATOR = 'OR'
-export const NOT_OPERATOR = 'NOT'
+const TERM_START = '"'
+const TERM_END = '"'
+const SCOPE_START = '('
+const SCOPE_END = ')'
+const ESCAPE_CHAR = '\\'
+const AND_OPERATOR = 'AND'
+const OR_OPERATOR = 'OR'
+const NOT_OPERATOR = 'NOT'
 
 export const readOperatorBuffer = (
   buffer: string | null,
