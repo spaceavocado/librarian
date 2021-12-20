@@ -1,4 +1,4 @@
-import { Evaluable } from '.';
+import { Evaluable } from './Evaluable';
 import { Match } from './Match';
 export declare const isAdvancedTerm: (term: string) => boolean;
 export declare const advancedTermRx: (term: string) => string;

@@ -4,3 +4,4 @@ export { term } from './term';
 export { and } from './and';
 export { or } from './or';
 export { not } from './not';
+export { probe, ProbeResult } from './probe';
