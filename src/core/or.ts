@@ -17,10 +17,10 @@ export const or = (...operands: Evaluable[]): Evaluable =>
   ((id) => ({
     id,
     descendants: operands,
-    toString: (format = identity) =>
-      `(${operands
-        .map(pipe((operand) => operand.toString(), format))
-        .join(' OR ')})`,
+    toString: (
+      format = (...operands) =>
+        `(${operands.map((operand) => operand.toString()).join(' OR ')})`
+    ) => format(...operands),
     evaluate: function (context, onEvaluation) {
       return pipe(
         evaluate(operands, onEvaluation),

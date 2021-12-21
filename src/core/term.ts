@@ -87,7 +87,7 @@ export const advancedTerm =
 export const term = (term: string): Evaluable =>
   ((id, evaluate) => ({
     id,
-    toString: (format) => (format ? format(term) : `"${term}"`),
+    toString: (format = (term) => `"${term}"`) => format(term),
     evaluate: function (context, onEvaluation) {
       return pipe(
         evaluate,

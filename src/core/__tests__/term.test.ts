@@ -1,3 +1,4 @@
+import { Serializable } from '../Evaluable'
 import {
   advancedTerm,
   advancedTermRx,
@@ -159,7 +160,7 @@ describe('librarian / core', () => {
     describe('toString', () => {
       it.each([
         ['dog', undefined, '"dog"'],
-        ['dog', (operand: string) => `$${operand}`, '$dog'],
+        ['dog', (operand: Serializable) => `$${operand}`, '$dog'],
       ])(
         'term %p using format %p should be produce %s',
         (needle, format, expected) => {

@@ -7,9 +7,13 @@ export type Evaluation = (
   result: EvaluationResult
 ) => void
 
+export type Serializable = {
+  toString: () => string
+}
+
 export type Evaluable = {
   id: symbol
   descendants?: Evaluable[]
-  toString: (format?: (operand: string) => string) => string
+  toString: (format?: (...arg: Serializable[]) => string) => string
   evaluate: (context: string, onEvaluation?: Evaluation) => EvaluationResult
 }

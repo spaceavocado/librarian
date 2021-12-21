@@ -1,4 +1,4 @@
-import { Evaluable } from '../Evaluable'
+import { Evaluable, Serializable } from '../Evaluable'
 import { or } from '../or'
 
 describe('librarian / core', () => {
@@ -32,7 +32,11 @@ describe('librarian / core', () => {
     describe('toString', () => {
       it.each([
         [undefined, '(Yes OR Yes)'],
-        [(operand: string) => `$${operand}`, '($Yes OR $Yes)'],
+        [
+          (...operands: Serializable[]) =>
+            operands.map((operand) => operand.toString()).join(' || '),
+          'Yes || Yes',
+        ],
       ])('format %p should be produce %s', (format, expected) => {
         expect(or(yes, yes).toString(format)).toBe(expected)
       })

@@ -20,10 +20,10 @@ export const and = (...operands: Evaluable[]): Evaluable =>
   ((id) => ({
     id,
     descendants: operands,
-    toString: (format = identity) =>
-      `(${operands
-        .map(pipe((operand) => operand.toString(), format))
-        .join(' AND ')})`,
+    toString: (
+      format = (...operands) =>
+        `(${operands.map((operand) => operand.toString()).join(' AND ')})`
+    ) => format(...operands),
     evaluate: function (context, onEvaluation) {
       return pipe(
         evaluate(operands, onEvaluation),

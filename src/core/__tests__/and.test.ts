@@ -1,5 +1,5 @@
 import { and } from '../and'
-import { Evaluable } from '../Evaluable'
+import { Evaluable, Serializable } from '../Evaluable'
 
 describe('librarian / core', () => {
   describe('and', () => {
@@ -32,7 +32,11 @@ describe('librarian / core', () => {
     describe('toString', () => {
       it.each([
         [undefined, '(Yes AND Yes)'],
-        [(operand: string) => `$${operand}`, '($Yes AND $Yes)'],
+        [
+          (...operands: Serializable[]) =>
+            operands.map((operand) => operand.toString()).join(' && '),
+          'Yes && Yes',
+        ],
       ])('format %p should be produce %s', (format, expected) => {
         expect(and(yes, yes).toString(format)).toBe(expected)
       })
