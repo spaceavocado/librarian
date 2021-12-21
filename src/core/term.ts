@@ -38,9 +38,9 @@ export const plainTerm =
           term,
           match: context.slice(index, index + term.length),
           index,
-          length: term.length,
+          length: needle.length,
         })
-        start += index + term.length
+        start = index + needle.length
       }
 
       return matches.length ? matches : false
