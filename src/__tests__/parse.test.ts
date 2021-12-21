@@ -47,11 +47,13 @@ describe('librarian / parser', () => {
   test('reduceOperands', () => {
     const combined: (operands: Evaluable[]) => Evaluable = () => ({
       id: Symbol(),
+      kind: '',
       toString: () => 'COMBINED',
       evaluate: () => false,
     })
     const single: Evaluable = {
       id: Symbol(),
+      kind: '',
       toString: () => 'SINGLE',
       evaluate: () => false,
     }

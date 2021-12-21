@@ -7,6 +7,7 @@ export declare const combine: (evaluable: Evaluable, evaluationMap: Record<symbo
 export declare const probe: (evaluable: Evaluable) => {
     evaluate: (context: string) => [EvaluationResult, ProbeResult];
     id: symbol;
+    kind: string;
     descendants?: Evaluable[] | undefined;
     toString: (format?: ((...arg: import("./Evaluable").Serializable[]) => string) | undefined) => string;
 };

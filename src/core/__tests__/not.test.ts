@@ -1,14 +1,15 @@
 import { Evaluable, Serializable } from '../Evaluable'
-import { not } from '../not'
+import { NOT, not } from '../not'
 
 describe('librarian / core', () => {
   describe('not', () => {
     const yes: Evaluable = {
       id: Symbol(),
+      kind: NOT,
       evaluate: () => [],
       toString: () => 'Yes',
     }
-    const no: Evaluable = { id: Symbol(), evaluate: () => false }
+    const no: Evaluable = { id: Symbol(), kind: NOT, evaluate: () => false }
 
     describe('evaluate', () => {
       it.each([

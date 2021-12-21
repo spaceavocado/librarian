@@ -1,14 +1,15 @@
-import { and } from '../and'
+import { AND, and } from '../and'
 import { Evaluable, Serializable } from '../Evaluable'
 
 describe('librarian / core', () => {
   describe('and', () => {
     const yes: Evaluable = {
       id: Symbol(),
+      kind: AND,
       evaluate: () => [],
       toString: () => 'Yes',
     }
-    const no: Evaluable = { id: Symbol(), evaluate: () => false }
+    const no: Evaluable = { id: Symbol(), kind: AND, evaluate: () => false }
 
     describe('evaluate', () => {
       it.each([
