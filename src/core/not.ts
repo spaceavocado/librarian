@@ -5,7 +5,8 @@ export const not = (operand: Evaluable): Evaluable =>
   ((id) => ({
     id,
     descendants: [operand],
-    toString: (format = identity) => `NOT ${format(operand.toString())}`,
+    toString: (format = (operand) => `NOT ${operand.toString()}`) =>
+      format(operand),
     evaluate: function (context, onEvaluation) {
       return pipe(
         (evaluated) => (evaluated === false ? [] : false),

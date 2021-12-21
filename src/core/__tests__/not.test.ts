@@ -1,4 +1,4 @@
-import { Evaluable } from '../Evaluable'
+import { Evaluable, Serializable } from '../Evaluable'
 import { not } from '../not'
 
 describe('librarian / core', () => {
@@ -30,7 +30,7 @@ describe('librarian / core', () => {
     describe('toString', () => {
       it.each([
         [undefined, 'NOT Yes'],
-        [(operand: string) => `$${operand}`, 'NOT $Yes'],
+        [(operand: Serializable) => `!${operand.toString()}`, '!Yes'],
       ])('format %p should be produce %s', (format, expected) => {
         expect(not(yes).toString(format)).toBe(expected)
       })
