@@ -131,6 +131,13 @@ export const parse = (input: string): Evaluable => {
     return [combine(operands), position]
   }
 
+  // unscoped plain term, e.g: "term", auto-scoped, i.e.: "\"term\""
+  input = /^["(][")]$|^[^\s][")]$|^["(][^\s]$/.test(
+    input[0] + input[input.length - 1]
+  )
+    ? input
+    : TERM_START + input + TERM_END
+
   const parsed = scope(input)[0]
   if (!parsed) {
     throw new Error(`invalid syntax: ${input}`)

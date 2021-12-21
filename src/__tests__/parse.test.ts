@@ -67,6 +67,7 @@ describe('librarian / parser', () => {
   describe('parse', () => {
     it.each([
       // Plain term
+      ['Blue', '"Blue"'],
       ['"Blue"', '"Blue"'],
       ['("Blue")', '"Blue"'],
       // AND
@@ -102,6 +103,7 @@ describe('librarian / parser', () => {
       ['"Blue" AND "Peter', '"Blue"'],
       ['"Blue" AND (())', '"Blue"'],
       ['"Blue" ))(', '"Blue"'],
+      ['AND', '"AND"'],
     ])('input %p should be parsed as %s', (input, expected) => {
       expect(parse(input).toString()).toBe(expected)
     })
@@ -114,7 +116,6 @@ describe('librarian / parser', () => {
       ],
       // Unterminated term, hard error
       ['"Blue', 'invalid syntax: "Blue'],
-      ['AND', 'invalid syntax: AND'],
     ])('input %p should throw an error', (input, error) => {
       expect(() => parse(input)).toThrow(error)
     })
