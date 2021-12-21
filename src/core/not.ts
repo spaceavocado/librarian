@@ -1,9 +1,12 @@
 import { identity, pipe, tap } from '../internal'
 import { Evaluable } from './Evaluable'
 
+export const NOT = 'NOT'
+
 export const not = (operand: Evaluable): Evaluable =>
   ((id) => ({
     id,
+    kind: NOT,
     descendants: [operand],
     toString: (format = (operand) => `NOT ${operand.toString()}`) =>
       format(operand),
@@ -13,4 +16,4 @@ export const not = (operand: Evaluable): Evaluable =>
         onEvaluation ? tap((result) => onEvaluation(this, result)) : identity
       )(operand.evaluate(context, onEvaluation))
     },
-  }))(Symbol('not'))
+  }))(Symbol(NOT))

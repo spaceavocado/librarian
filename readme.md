@@ -2,7 +2,7 @@
 
 A micro search library leveraging [Boolean Operators](https://library.alliant.edu/screens/boolean.pdf), supporting [wildcard](https://apus.libanswers.com/faq/2235) annotation within search terms.
 
-> Revision: Dec 20, 2021.
+> Revision: Dec 21, 2021.
 
 ## Installation
 
@@ -15,7 +15,7 @@ yarn add @spaceavocado/librarian
 
 > The library is being build as **CommonJS** module and **ESM**.
 
-## Basic Usage
+## Usage
 
 An evaluable search expression could be created directly from the evaluable core expression functions or parsed from the raw expression input.
 
@@ -92,6 +92,8 @@ const expression2 = parse('"cent??" AND ("new york" OR "berlin")').toString()
 // The literal form of the expression2
 ;('("cent?? AND ("new york" OR "berlin")")')
 ```
+
+**Note**: `toString` method could be provided with a custom formatting function.
 
 ## Boolean Operators
 

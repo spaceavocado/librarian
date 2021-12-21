@@ -13,9 +13,12 @@ const evaluate =
     return false
   }
 
+export const OR = 'OR'
+
 export const or = (...operands: Evaluable[]): Evaluable =>
   ((id) => ({
     id,
+    kind: OR,
     descendants: operands,
     toString: (
       format = (...operands) =>
@@ -27,4 +30,4 @@ export const or = (...operands: Evaluable[]): Evaluable =>
         onEvaluation ? tap((result) => onEvaluation(this, result)) : identity
       )(context)
     },
-  }))(Symbol('or'))
+  }))(Symbol(OR))

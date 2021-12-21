@@ -1,7 +1,7 @@
-export { Evaluable } from './Evaluable';
+export { Evaluable, EvaluationResult, Evaluation, Serializable, } from './Evaluable';
 export { Match } from './Match';
-export { term } from './term';
-export { and } from './and';
-export { or } from './or';
-export { not } from './not';
+export { term, TERM } from './term';
+export { and, AND } from './and';
+export { or, OR } from './or';
+export { not, NOT } from './not';
 export { probe, ProbeResult } from './probe';
