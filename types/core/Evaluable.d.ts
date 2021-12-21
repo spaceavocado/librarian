@@ -6,6 +6,7 @@ export declare type Serializable = {
 };
 export declare type Evaluable = {
     id: symbol;
+    kind: string;
     descendants?: Evaluable[];
     toString: (format?: (...arg: Serializable[]) => string) => string;
     evaluate: (context: string, onEvaluation?: Evaluation) => EvaluationResult;

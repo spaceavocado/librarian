@@ -1,14 +1,15 @@
 import { Evaluable, Serializable } from '../Evaluable'
-import { or } from '../or'
+import { OR, or } from '../or'
 
 describe('librarian / core', () => {
   describe('or', () => {
     const yes: Evaluable = {
       id: Symbol(),
+      kind: OR,
       evaluate: () => [],
       toString: () => 'Yes',
     }
-    const no: Evaluable = { id: Symbol(), evaluate: () => false }
+    const no: Evaluable = { id: Symbol(), kind: OR, evaluate: () => false }
 
     describe('evaluate', () => {
       it.each([

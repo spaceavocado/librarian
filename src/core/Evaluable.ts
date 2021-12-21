@@ -13,6 +13,7 @@ export type Serializable = {
 
 export type Evaluable = {
   id: symbol
+  kind: string
   descendants?: Evaluable[]
   toString: (format?: (...arg: Serializable[]) => string) => string
   evaluate: (context: string, onEvaluation?: Evaluation) => EvaluationResult
