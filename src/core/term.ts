@@ -69,6 +69,8 @@ export const advancedTerm =
       return matches.length ? matches : false
     })(new RegExp(advancedTermRx(term), 'ig'))
 
+export const TERM = 'TERM'
+
 /**
  * Supported wildcards:
  *
@@ -87,6 +89,7 @@ export const advancedTerm =
 export const term = (term: string): Evaluable =>
   ((id, evaluate) => ({
     id,
+    kind: TERM,
     toString: (format = (term) => `"${term}"`) => format(term),
     evaluate: function (context, onEvaluation) {
       return pipe(
@@ -94,7 +97,4 @@ export const term = (term: string): Evaluable =>
         onEvaluation ? tap((result) => onEvaluation(this, result)) : identity
       )(context)
     },
-  }))(
-    Symbol('term'),
-    isAdvancedTerm(term) ? advancedTerm(term) : plainTerm(term)
-  )
+  }))(Symbol(TERM), isAdvancedTerm(term) ? advancedTerm(term) : plainTerm(term))

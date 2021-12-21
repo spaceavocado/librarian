@@ -16,9 +16,12 @@ const evaluate =
     return matches
   }
 
+export const AND = 'AND'
+
 export const and = (...operands: Evaluable[]): Evaluable =>
   ((id) => ({
     id,
+    kind: AND,
     descendants: operands,
     toString: (
       format = (...operands) =>
@@ -30,4 +33,4 @@ export const and = (...operands: Evaluable[]): Evaluable =>
         onEvaluation ? tap((result) => onEvaluation(this, result)) : identity
       )(context)
     },
-  }))(Symbol('and'))
+  }))(Symbol(AND))
