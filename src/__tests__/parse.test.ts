@@ -87,6 +87,14 @@ describe('librarian / parser', () => {
         '"Blue" OR ("City" AND (NOT "Dog" OR "Audi"))',
         '("Blue" OR ("City" AND (NOT "Dog" OR "Audi")))',
       ],
+      [
+        '(("santa" OR "house") OR ("missing" OR "sky??"))',
+        '(("santa" OR "house") OR ("missing" OR "sky??"))',
+      ],
+      [
+        '("santa" OR "house") OR ("missing" OR "sky??")',
+        '(("santa" OR "house") OR ("missing" OR "sky??"))',
+      ],
       // Escaping
       ['"Blue \\"jack\\" bird"', '"Blue \\"jack\\" bird"'],
       ['"\\"Blue"', '"\\"Blue"'],

@@ -123,6 +123,7 @@ export const parse = (input: string): Evaluable => {
         position += endsAt
       }
       if (char === SCOPE_END) {
+        position++
         break
       }
     }
