@@ -1,9 +1,7 @@
 import { Match } from './Match';
 export declare type EvaluationResult = false | Match[];
 export declare type Evaluation = (evaluable: Evaluable, result: EvaluationResult) => void;
-export declare type Serializable = {
-    toString: () => string;
-};
+export declare type Serializable = Evaluable | string;
 export declare type Evaluable = {
     id: symbol;
     kind: string;

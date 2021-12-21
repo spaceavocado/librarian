@@ -7,9 +7,7 @@ export type Evaluation = (
   result: EvaluationResult
 ) => void
 
-export type Serializable = {
-  toString: () => string
-}
+export type Serializable = Evaluable | string
 
 export type Evaluable = {
   id: symbol
