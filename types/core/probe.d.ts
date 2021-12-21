@@ -8,5 +8,5 @@ export declare const probe: (evaluable: Evaluable) => {
     evaluate: (context: string) => [EvaluationResult, ProbeResult];
     id: symbol;
     descendants?: Evaluable[] | undefined;
-    toString: (format?: ((operand: string) => string) | undefined) => string;
+    toString: (format?: ((...arg: import("./Evaluable").Serializable[]) => string) | undefined) => string;
 };
