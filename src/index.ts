@@ -1,14 +1,6 @@
-export {
+export { and, AND, or, OR, term, TERM, not, NOT, probe } from './core'
+export type {
   Match,
-  and,
-  AND,
-  or,
-  OR,
-  term,
-  TERM,
-  not,
-  NOT,
-  probe,
   ProbeResult,
   EvaluationResult,
   Evaluation,
