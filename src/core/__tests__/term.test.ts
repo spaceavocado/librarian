@@ -11,6 +11,9 @@ describe('librarian / core', () => {
   describe('term', () => {
     describe('isAdvancedTerm', () => {
       it.each([
+        ['', false],
+        ['*', true],
+        ['?', true],
         ['Blue', false],
         ['Blu*', true],
         ['*lue', true],

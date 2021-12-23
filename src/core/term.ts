@@ -2,8 +2,16 @@ import { identity, pipe, replace, tap } from '../internal'
 import { Evaluable } from './Evaluable'
 import { Match } from './Match'
 
-export const isAdvancedTerm = (term: string): boolean =>
-  term.match(/(?<!\\)\*|(?<!\\)\?/) !== null
+export const isAdvancedTerm = (term: string): boolean => {
+  let tail = term[0] ?? ''
+  for (const char of term) {
+    if (tail !== '\\' && (char === '*' || char === '?')) {
+      return true
+    }
+    tail = char
+  }
+  return false
+}
 
 export const advancedTermRx = (term: string): string =>
   // Escaped wildcard characters are preserved via a temporary
