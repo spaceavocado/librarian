@@ -1,40 +1,38 @@
 import { XOR, xor } from '..'
-import { Evaluable, Serializable } from '../Evaluable'
+import { EvaluationResult, Serializable } from '../Evaluable'
 
 describe('librarian / core', () => {
   describe('xor', () => {
-    const yes: Evaluable = {
+    const evaluable = (result: EvaluationResult) => ({
       id: Symbol(),
       kind: XOR,
-      execute: () => [],
+      execute: () => result,
       test: () => false,
-      toString: () => 'Yes',
-    }
-    const no: Evaluable = {
-      id: Symbol(),
-      kind: XOR,
-      execute: () => false,
-      test: () => false,
-    }
+      toString: () => 'Evaluable',
+    })
+
+    const match = { index: 0, length: 0, match: 'match', term: 'match' }
 
     test('constructor', () => {
       expect(() => xor()).toThrow()
-      expect(() => xor(yes)).toThrow()
+      expect(() => xor(evaluable(true))).toThrow()
     })
 
     describe('execute', () => {
       it.each([
-        [[no, no], false],
-        [[yes, no], []],
-        [[no, yes], []],
-        [[yes, yes], false],
-        [[no, yes, no], []],
-        [[yes, no, yes], false],
+        [[evaluable(false), evaluable(false)], false],
+        [[evaluable(true), evaluable(false)], true],
+        [[evaluable([match]), evaluable(false)], [match]],
+        [[evaluable(false), evaluable(true)], true],
+        [[evaluable(true), evaluable(true)], false],
+        [[evaluable(false), evaluable(true), evaluable(false)], true],
+        [[evaluable(false), evaluable([match]), evaluable(false)], [match]],
+        [[evaluable(true), evaluable(false), evaluable(true)], false],
       ])('operands %p should be executed as %s', (operands, expected) => {
         expect(xor(...operands).execute('')).toStrictEqual(expected)
       })
 
-      it.each([[[yes, no], jest.fn(), []]])(
+      it.each([[[evaluable(true), evaluable(false)], jest.fn(), true]])(
         'operands %p with tap %p should be executed as %s',
         (operands, tap, expected) => {
           expect(xor(...operands).execute('', tap)).toStrictEqual(expected)
@@ -45,12 +43,12 @@ describe('librarian / core', () => {
 
     describe('test', () => {
       it.each([
-        [[no, no], false],
-        [[yes, no], true],
-        [[no, yes], true],
-        [[yes, yes], false],
-        [[no, yes, no], true],
-        [[yes, no, yes], false],
+        [[evaluable(false), evaluable(false)], false],
+        [[evaluable(true), evaluable(false)], true],
+        [[evaluable(false), evaluable(true)], true],
+        [[evaluable(true), evaluable(true)], false],
+        [[evaluable(false), evaluable(true), evaluable(false)], true],
+        [[evaluable(true), evaluable(false), evaluable(true)], false],
       ])('operands %p should be tested as %s', (operands, expected) => {
         expect(xor(...operands).test('')).toStrictEqual(expected)
       })
@@ -58,14 +56,16 @@ describe('librarian / core', () => {
 
     describe('toString', () => {
       it.each([
-        [undefined, '(Yes XOR Yes)'],
+        [undefined, '(Evaluable XOR Evaluable)'],
         [
           (...operands: Serializable[]) =>
             operands.map((operand) => operand.toString()).join(' ⊻ '),
-          'Yes ⊻ Yes',
+          'Evaluable ⊻ Evaluable',
         ],
       ])('format %p should be produce %s', (format, expected) => {
-        expect(xor(yes, yes).toString(format)).toBe(expected)
+        expect(xor(evaluable(true), evaluable(true)).toString(format)).toBe(
+          expected
+        )
       })
     })
   })

@@ -10,7 +10,7 @@ const execute =
       }
     }
 
-    return []
+    return true
   }
 
 export const NOR = 'NOR'

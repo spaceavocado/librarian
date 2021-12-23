@@ -6,7 +6,7 @@ const combine = (a: boolean, b: boolean): boolean => (a || b) && !(a && b)
 
 const execute =
   (operands: Evaluable[], onEvaluation?: Evaluation) => (context: string) => {
-    let matches: Match[] = []
+    let matches: true | Match[] = []
 
     let result
     for (const operand of operands) {

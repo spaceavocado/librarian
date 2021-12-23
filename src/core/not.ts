@@ -9,7 +9,7 @@ export const not = (operand: Evaluable): Evaluable => ({
   descendants: [operand],
   execute: function (context, onEvaluation) {
     return pipe(
-      (evaluated) => (evaluated === false ? [] : false),
+      (evaluated) => !evaluated,
       onEvaluation ? tap((result) => onEvaluation(this, result)) : identity
     )(operand.execute(context, onEvaluation))
   },

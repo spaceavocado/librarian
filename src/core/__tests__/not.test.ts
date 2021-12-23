@@ -1,31 +1,25 @@
-import { NOT, not } from '..'
-import { Evaluable, Serializable } from '../Evaluable'
+import { NOT, not, TERM } from '..'
+import { EvaluationResult, Serializable } from '../Evaluable'
 
 describe('librarian / core', () => {
   describe('not', () => {
-    const yes: Evaluable = {
+    const evaluable = (result: EvaluationResult) => ({
       id: Symbol(),
-      kind: NOT,
-      execute: () => [],
+      kind: NOT + TERM,
+      execute: () => result,
       test: () => false,
-      toString: () => 'Yes',
-    }
-    const no: Evaluable = {
-      id: Symbol(),
-      kind: NOT,
-      execute: () => false,
-      test: () => false,
-    }
+      toString: () => 'Evaluable',
+    })
 
     describe('execute', () => {
       it.each([
-        [no, []],
-        [yes, false],
+        [evaluable(false), true],
+        [evaluable(true), false],
       ])('operand %p should be executed as %s', (operand, expected) => {
         expect(not(operand).execute('')).toStrictEqual(expected)
       })
 
-      it.each([[yes, jest.fn(), false]])(
+      it.each([[evaluable(true), jest.fn(), false]])(
         'operand %p with tap %p should be executed as %s',
         (operand, tap, expected) => {
           expect(not(operand).execute('', tap)).toStrictEqual(expected)
@@ -36,8 +30,8 @@ describe('librarian / core', () => {
 
     describe('test', () => {
       it.each([
-        [no, true],
-        [yes, false],
+        [evaluable(false), true],
+        [evaluable(true), false],
       ])('operand %p should be tested as %s', (operand, expected) => {
         expect(not(operand).test('')).toStrictEqual(expected)
       })
@@ -45,10 +39,10 @@ describe('librarian / core', () => {
 
     describe('toString', () => {
       it.each([
-        [undefined, 'NOT Yes'],
-        [(operand: Serializable) => `!${operand.toString()}`, '!Yes'],
+        [undefined, 'NOT Evaluable'],
+        [(operand: Serializable) => `!${operand.toString()}`, '!Evaluable'],
       ])('format %p should be produce %s', (format, expected) => {
-        expect(not(yes).toString(format)).toBe(expected)
+        expect(not(evaluable(true)).toString(format)).toBe(expected)
       })
     })
   })

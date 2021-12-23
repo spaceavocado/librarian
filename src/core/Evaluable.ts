@@ -1,6 +1,6 @@
 import { Match } from './Match'
 
-export type EvaluationResult = false | Match[]
+export type EvaluationResult = boolean | Match[]
 
 export type Evaluation = (
   evaluable: Evaluable,

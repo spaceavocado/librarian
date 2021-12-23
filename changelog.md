@@ -1,5 +1,9 @@
 # Librarian changelog
 
+## 0.3.1
+
+- Evaluation Result now represents an empty Match array as true.
+
 ## 0.3.0
 
 - Add logical NOR operator.

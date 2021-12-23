@@ -1,4 +1,4 @@
-import { identity, pipe, tap } from '../internal'
+import { identity, isBoolean, pipe, tap } from '../internal'
 import { Evaluable, Evaluation } from './Evaluable'
 import { Match } from './Match'
 
@@ -7,13 +7,15 @@ const execute =
     const matches: Match[] = []
     for (const operand of operands) {
       const evaluated = operand.execute(context, onEvaluation)
+      if (!isBoolean(evaluated)) {
+        matches.push(...evaluated)
+      }
       if (!evaluated) {
         return false
       }
-      matches.push(...evaluated)
     }
 
-    return matches
+    return matches.length ? matches : true
   }
 
 export const AND = 'AND'

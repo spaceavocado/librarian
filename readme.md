@@ -37,6 +37,7 @@ type Evaluable = {
 ```
 
 - `EvaluationResult: Match[]` = Matches found within the context.
+- `EvaluationResult: true` = Evaluated as matching within the context, without any direct match records (NOT operand).
 - `EvaluationResult: false` = Not matches found within the context.
 
 ```ts

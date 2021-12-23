@@ -1,38 +1,36 @@
 import { OR, or } from '..'
-import { Evaluable, Serializable } from '../Evaluable'
+import { EvaluationResult, Serializable } from '../Evaluable'
 
 describe('librarian / core', () => {
   describe('or', () => {
-    const yes: Evaluable = {
+    const evaluable = (result: EvaluationResult) => ({
       id: Symbol(),
       kind: OR,
-      execute: () => [],
+      execute: () => result,
       test: () => false,
-      toString: () => 'Yes',
-    }
-    const no: Evaluable = {
-      id: Symbol(),
-      kind: OR,
-      execute: () => false,
-      test: () => false,
-    }
+      toString: () => 'Evaluable',
+    })
+
+    const match = { index: 0, length: 0, match: 'match', term: 'match' }
 
     test('constructor', () => {
       expect(() => or()).toThrow()
-      expect(() => or(yes)).toThrow()
+      expect(() => or(evaluable(true))).toThrow()
     })
 
     describe('execute', () => {
       it.each([
-        [[no, no], false],
-        [[yes, no], []],
-        [[no, yes], []],
-        [[yes, yes], []],
+        [[evaluable(false), evaluable(false)], false],
+        [[evaluable(true), evaluable(false)], true],
+        [[evaluable([match]), evaluable(false)], [match]],
+        [[evaluable(false), evaluable(true)], true],
+        [[evaluable(true), evaluable(true)], true],
+        [[evaluable([match]), evaluable([match])], [match]],
       ])('operands %p should be executed as %s', (operands, expected) => {
         expect(or(...operands).execute('')).toStrictEqual(expected)
       })
 
-      it.each([[[yes, yes], jest.fn(), []]])(
+      it.each([[[evaluable(true), evaluable(true)], jest.fn(), true]])(
         'operands %p with tap %p should be executed as %s',
         (operands, tap, expected) => {
           expect(or(...operands).execute('', tap)).toStrictEqual(expected)
@@ -43,10 +41,10 @@ describe('librarian / core', () => {
 
     describe('test', () => {
       it.each([
-        [[no, no], false],
-        [[no, yes], true],
-        [[yes, no], true],
-        [[yes, yes], true],
+        [[evaluable(false), evaluable(false)], false],
+        [[evaluable(false), evaluable(true)], true],
+        [[evaluable(true), evaluable(false)], true],
+        [[evaluable(true), evaluable(true)], true],
       ])('operands %p should be tested as %s', (operands, expected) => {
         expect(or(...operands).test('')).toStrictEqual(expected)
       })
@@ -54,14 +52,16 @@ describe('librarian / core', () => {
 
     describe('toString', () => {
       it.each([
-        [undefined, '(Yes OR Yes)'],
+        [undefined, '(Evaluable OR Evaluable)'],
         [
           (...operands: Serializable[]) =>
             operands.map((operand) => operand.toString()).join(' || '),
-          'Yes || Yes',
+          'Evaluable || Evaluable',
         ],
       ])('format %p should be produce %s', (format, expected) => {
-        expect(or(yes, yes).toString(format)).toBe(expected)
+        expect(or(evaluable(true), evaluable(true)).toString(format)).toBe(
+          expected
+        )
       })
     })
   })
