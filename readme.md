@@ -23,15 +23,36 @@ The library could be tested in the online sandbox [https://librarian-sandbox.web
 
 An evaluable search expression could be created directly from the evaluable core expression functions or parsed from the raw expression input.
 
+### Evaluable / Expression Data Model
+
+```ts
+type Evaluable = {
+  // Convert the expression to a literal expression string
+  toString: (format?: (...arg: Serializable[]) => string) => string
+  // Test if there are any matches within the given context
+  test: (context: string) => boolean
+  // Execute the expression within the given context and get fond matches, if any.
+  execute: (context: string, onEvaluation?: Evaluation) => EvaluationResult
+}
+```
+
+- `EvaluationResult: Match[]` = Matches found within the context.
+- `EvaluationResult: false` = Not matches found within the context.
+
+```ts
+import { term, and, or, not, parse } from '@spaceavocado/librarian'
+// term(), and(), or(), not(), parse() return an "Evaluable"
+```
+
 ### Raw Expression Parsing
 
 ```ts
 import { parse } from '@spaceavocado/librarian'
 
 // Parse raw expression into a search function
-const search = parse('"cent??" AND ("new york" OR "berlin")').evaluate
+const search = parse('"cent??" AND ("new york" OR "berlin")').execute
 
-// Perform an search
+// Perform a search
 const result1 = search("Christie visited the New York's city center last week.")
 
 // The result1 contains a collection of librarian.Match results
@@ -40,7 +61,7 @@ const result1 = search("Christie visited the New York's city center last week.")
   { match: 'New York', term: 'new york', index: 21, length: 8 },
 ]
 
-// Perform an search
+// Perform a search
 const result2 = search(
   "Christie visited the New York's city outskirt last week."
 )
@@ -49,18 +70,15 @@ const result2 = search(
 false
 ```
 
-### Search Expression Operators
+### Search Expression Evaluable
 
 ```ts
-import { term, and, or } from '@spaceavocado/librarian'
+import { term, and, or, not } from '@spaceavocado/librarian'
 
 // Create the search function from the search expression handlers
-const search = and(
-  term('cent??'),
-  or(term('new york'), term('berlin'))
-).evaluate
+const search = and(term('cent??'), or(term('new york'), term('berlin'))).execute
 
-// Perform an search
+// Perform a search
 const result1 = search("Christie visited the New York's city center last week.")
 
 // The result1 contains a collection of librarian.Match results
@@ -69,7 +87,7 @@ const result1 = search("Christie visited the New York's city center last week.")
   { match: 'New York', term: 'new york', index: 21, length: 8 },
 ]
 
-// Perform an search
+// Perform a search
 const result2 = search(
   "Christie visited the New York's city outskirt last week."
 )
@@ -126,8 +144,8 @@ The NASA Juno mission, which began orbiting Jupiter in July 2016, just recently 
 ```ts
 import { term, and } from '@spaceavocado/librarian'
 
-const search = and(term('new york'), term('berlin')).evaluate
-const search = parse('"new york" AND "berlin"').evaluate
+const search = and(term('new york'), term('berlin')).execute
+const search = parse('"new york" AND "berlin"').execute
 
 const result = search("Christie visited the New York's city center last week.")
 ```
@@ -161,8 +179,8 @@ The NASA Juno mission, which began orbiting Jupiter in July 2016, just recently 
 ```ts
 import { term, or } from '@spaceavocado/librarian'
 
-const search = and(term('new york'), term('berlin')).evaluate
-const search = parse('"new york" OR "berlin"').evaluate
+const search = and(term('new york'), term('berlin')).execute
+const search = parse('"new york" OR "berlin"').execute
 
 const result = search("Christie visited the New York's city center last week.")
 ```
@@ -200,9 +218,9 @@ The NASA Juno mission, which began orbiting Jupiter in July 2016, just recently 
 ```ts
 import { term, not } from '@spaceavocado/librarian'
 
-const search = not(term('new york')).evaluate
-const search = parse('NOT "new york"').evaluate
-const search = parse('"new york" AND NOT ("center" AND NOT "week")').evaluate
+const search = not(term('new york')).execute
+const search = parse('NOT "new york"').execute
+const search = parse('"new york" AND NOT ("center" AND NOT "week")').execute
 
 const result = search("Christie visited the New York's city center last week.")
 ```
@@ -237,8 +255,8 @@ An asterisk (\*) may be used to specify any number of characters. It is typicall
 ```ts
 import { term } from '@spaceavocado/librarian'
 
-const search = term('cent*').evaluate
-const search = parse('"cent*"').evaluate
+const search = term('cent*').execute
+const search = parse('"cent*"').execute
 
 const result = search("Christie visited the New York's city center last week.")
 ```
@@ -260,8 +278,8 @@ A question mark (?) may be used to represent a single character, anywhere in the
 ```ts
 import { term } from '@spaceavocado/librarian'
 
-const search = term('cent??').evaluate
-const search = parse('"cent??"').evaluate
+const search = term('cent??').execute
+const search = parse('"cent??"').execute
 
 const result = search("Christie visited the New York's city center last week.")
 ```
@@ -296,9 +314,9 @@ const expression = and(
   or(term('new york'), term('berlin'))
 )
 
-const search = probe(expression).evaluate
+const search = probe(expression).execute
 
-// Perform an search with probe data
+// Perform a search with probe data
 const [result1, probeData1] = search("Christie visited the New York's city center last week.")
 
 // The result1 contains a collection of librarian.Match results
@@ -311,7 +329,8 @@ const [result1, probeData1] = search("Christie visited the New York's city cente
 ;{
   id: Symbol(and),
   toString: [Function: toString],
-  evaluate: [Function: evaluate],
+  execute: [Function: execute],
+  test: [Function: test],
   result: [
     { term: 'cent??', match: 'center', index: 37, length: 6 },
     { term: 'new york', match: 'New York', index: 21, length: 8 }
@@ -320,7 +339,8 @@ const [result1, probeData1] = search("Christie visited the New York's city cente
     {
       id: Symbol(term),
       toString: [Function: toString],
-      evaluate: [Function: evaluate],
+      execute: [Function: execute],
+      test: [Function: test],
       result: [
         { term: 'cent??', match: 'center', index: 37, length: 6 }
       ],
@@ -329,7 +349,8 @@ const [result1, probeData1] = search("Christie visited the New York's city cente
     {
       id: Symbol(or),
       toString: [Function: toString],
-      evaluate: [Function: evaluate],
+      execute: [Function: execute],
+      test: [Function: test],
       result: [
         { term: 'new york', match: 'New York', index: 21, length: 8 }
       ],
@@ -337,7 +358,8 @@ const [result1, probeData1] = search("Christie visited the New York's city cente
         {
           id: Symbol(term),
           toString: [Function: toString],
-          evaluate: [Function: evaluate],
+          execute: [Function: execute],
+          test: [Function: test],
           result: [
             { term: 'new york', match: 'New York', index: 21, length: 8 }
           ],
@@ -346,7 +368,8 @@ const [result1, probeData1] = search("Christie visited the New York's city cente
         {
           id: Symbol(term),
           toString: [Function: toString],
-          evaluate: [Function: evaluate],
+          execute: [Function: execute],
+          test: [Function: test],
           descendants: []
         }
       ],
@@ -355,9 +378,9 @@ const [result1, probeData1] = search("Christie visited the New York's city cente
 }
 ```
 
-- `result: Array` = The expression has been evaluated positively with given captured evaluation results.
-- `result: false` = The expression has been evaluated negatively.
-- `result: undefined` = The has not been evaluated, i.e this expression branch has not been needed to be evaluated.
+- `result: Match[]` = Matches found within the context.
+- `result: false` = Not matches found within the context.
+- `result: undefined` = The evaluable has not been executed, i.e this expression branch has not been needed to be executed.
 
 ---
 
