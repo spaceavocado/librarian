@@ -8,12 +8,15 @@ export const not = (operand: Evaluable): Evaluable =>
     id,
     kind: NOT,
     descendants: [operand],
-    toString: (format = (operand) => `NOT ${operand.toString()}`) =>
-      format(operand),
-    evaluate: function (context, onEvaluation) {
+    execute: function (context, onEvaluation) {
       return pipe(
         (evaluated) => (evaluated === false ? [] : false),
         onEvaluation ? tap((result) => onEvaluation(this, result)) : identity
-      )(operand.evaluate(context, onEvaluation))
+      )(operand.execute(context, onEvaluation))
     },
+    test: function (context) {
+      return this.execute(context) !== false
+    },
+    toString: (format = (operand) => `NOT ${operand.toString()}`) =>
+      format(operand),
   }))(Symbol(NOT))

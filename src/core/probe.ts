@@ -18,9 +18,9 @@ export const combine = (
 
 export const probe = (evaluable: Evaluable) => ({
   ...evaluable,
-  evaluate: (context: string): [EvaluationResult, ProbeResult] => {
+  execute: (context: string): [EvaluationResult, ProbeResult] => {
     const evaluationMap: Record<symbol, EvaluationResult> = {}
-    const result = evaluable.evaluate(context, (evaluable, result) => {
+    const result = evaluable.execute(context, (evaluable, result) => {
       evaluationMap[evaluable.id] = result
     })
     return [result, combine(evaluable, evaluationMap)]

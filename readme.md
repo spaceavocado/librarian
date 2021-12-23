@@ -2,7 +2,7 @@
 
 A micro search library leveraging [Boolean Operators](https://library.alliant.edu/screens/boolean.pdf), supporting [wildcard](https://apus.libanswers.com/faq/2235) annotation within search terms.
 
-> Revision: Dec 21, 2021.
+> Revision: Dec 22, 2021.
 
 ## Installation
 
@@ -169,7 +169,7 @@ const result = search("Christie visited the New York's city center last week.")
 
 ### NOT
 
-Flips the outcome of other Boolean Operators and/or result of the search term.
+Flips the outcome of AND, OR operators and/or result of the search term.
 
 #### Examples
 

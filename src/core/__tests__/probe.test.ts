@@ -1,6 +1,7 @@
+import { probe } from '..'
 import { Evaluable, EvaluationResult } from '../Evaluable'
 import { or } from '../or'
-import { combine, probe, ProbeResult } from '../probe'
+import { combine, ProbeResult } from '../probe'
 import { term } from '../term'
 
 describe('librarian / core', () => {
@@ -40,7 +41,7 @@ describe('librarian / core', () => {
       )
     })
 
-    describe('evaluate', () => {
+    describe('execute', () => {
       it.each([
         [e0, [false, { ...e0, result: false, descendants: [] }]],
         [
@@ -111,8 +112,8 @@ describe('librarian / core', () => {
             },
           ],
         ],
-      ])('evaluable %p is evaluated as %s', (evaluable, expected) => {
-        expect(probe(evaluable).evaluate('green')).toStrictEqual(expected)
+      ])('evaluable %p is executed as %s', (evaluable, expected) => {
+        expect(probe(evaluable).execute('green')).toStrictEqual(expected)
       })
     })
   })
