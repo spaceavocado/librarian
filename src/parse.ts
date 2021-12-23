@@ -1,4 +1,4 @@
-import { and, Evaluable, not, or, term } from './core'
+import { and, Evaluable, nor, not, or, term, xor } from './core'
 import { identity } from './internal'
 
 const TERM_START = '"'
@@ -8,6 +8,8 @@ const SCOPE_END = ')'
 const ESCAPE_CHAR = '\\'
 const AND_OPERATOR = 'AND'
 const OR_OPERATOR = 'OR'
+const NOR_OPERATOR = 'NOR'
+const XOR_OPERATOR = 'XOR'
 const NOT_OPERATOR = 'NOT'
 
 export const readOperatorBuffer = (
@@ -27,7 +29,7 @@ export const setExclusiveOperator =
     }
     if (previous && previous !== pending) {
       throw new Error(
-        'exclusive logical operators cannot be combined within the same scope'
+        'logical operators (AND, OR, XOR, NOR) cannot be combined within the same scope'
       )
     }
     return pending
@@ -58,6 +60,18 @@ const operators: Record<string, Operator> = {
   [OR_OPERATOR]: {
     combine: () => (operands) =>
       reduceOperands((operands) => or(...operands))(operands),
+    add: identity,
+    exclusive: true,
+  },
+  [NOR_OPERATOR]: {
+    combine: () => (operands) =>
+      reduceOperands((operands) => nor(...operands))(operands),
+    add: identity,
+    exclusive: true,
+  },
+  [XOR_OPERATOR]: {
+    combine: () => (operands) =>
+      reduceOperands((operands) => xor(...operands))(operands),
     add: identity,
     exclusive: true,
   },
