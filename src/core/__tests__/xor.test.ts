@@ -1,41 +1,43 @@
-import { AND, and, TERM } from '..'
+import { XOR, xor } from '..'
 import { Evaluable, Serializable } from '../Evaluable'
 
 describe('librarian / core', () => {
-  describe('and', () => {
+  describe('xor', () => {
     const yes: Evaluable = {
       id: Symbol(),
-      kind: AND,
+      kind: XOR,
       execute: () => [],
       test: () => false,
       toString: () => 'Yes',
     }
     const no: Evaluable = {
       id: Symbol(),
-      kind: TERM,
+      kind: XOR,
       execute: () => false,
       test: () => false,
     }
 
     test('constructor', () => {
-      expect(() => and()).toThrow()
-      expect(() => and(yes)).toThrow()
+      expect(() => xor()).toThrow()
+      expect(() => xor(yes)).toThrow()
     })
 
     describe('execute', () => {
       it.each([
-        [[yes, yes], []],
         [[no, no], false],
-        [[no, yes], false],
-        [[yes, no], false],
+        [[yes, no], []],
+        [[no, yes], []],
+        [[yes, yes], false],
+        [[no, yes, no], []],
+        [[yes, no, yes], false],
       ])('operands %p should be executed as %s', (operands, expected) => {
-        expect(and(...operands).execute('')).toStrictEqual(expected)
+        expect(xor(...operands).execute('')).toStrictEqual(expected)
       })
 
-      it.each([[[yes, yes], jest.fn(), []]])(
+      it.each([[[yes, no], jest.fn(), []]])(
         'operands %p with tap %p should be executed as %s',
         (operands, tap, expected) => {
-          expect(and(...operands).execute('', tap)).toStrictEqual(expected)
+          expect(xor(...operands).execute('', tap)).toStrictEqual(expected)
           expect(tap.mock.calls[0][1]).toStrictEqual(expected)
         }
       )
@@ -43,25 +45,27 @@ describe('librarian / core', () => {
 
     describe('test', () => {
       it.each([
-        [[yes, yes], true],
         [[no, no], false],
-        [[no, yes], false],
-        [[yes, no], false],
+        [[yes, no], true],
+        [[no, yes], true],
+        [[yes, yes], false],
+        [[no, yes, no], true],
+        [[yes, no, yes], false],
       ])('operands %p should be tested as %s', (operands, expected) => {
-        expect(and(...operands).test('')).toStrictEqual(expected)
+        expect(xor(...operands).test('')).toStrictEqual(expected)
       })
     })
 
     describe('toString', () => {
       it.each([
-        [undefined, '(Yes AND Yes)'],
+        [undefined, '(Yes XOR Yes)'],
         [
           (...operands: Serializable[]) =>
-            operands.map((operand) => operand.toString()).join(' && '),
-          'Yes && Yes',
+            operands.map((operand) => operand.toString()).join(' ⊻ '),
+          'Yes ⊻ Yes',
         ],
       ])('format %p should be produce %s', (format, expected) => {
-        expect(and(yes, yes).toString(format)).toBe(expected)
+        expect(xor(yes, yes).toString(format)).toBe(expected)
       })
     })
   })
