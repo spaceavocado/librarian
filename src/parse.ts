@@ -131,6 +131,7 @@ export const parse = (input: string): Evaluable => {
     return [combine(operands), position]
   }
 
+  input = input.trim()
   // unscoped plain term, e.g: "term", auto-scoped, i.e.: "\"term\""
   input = /^["(][")]$|^[^\s][")]$|^["(][^\s]$/.test(
     input[0] + input[input.length - 1]

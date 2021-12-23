@@ -49,13 +49,15 @@ describe('librarian / parser', () => {
       id: Symbol(),
       kind: '',
       toString: () => 'COMBINED',
-      evaluate: () => false,
+      execute: () => false,
+      test: () => false,
     })
     const single: Evaluable = {
       id: Symbol(),
       kind: '',
       toString: () => 'SINGLE',
-      evaluate: () => false,
+      execute: () => false,
+      test: () => false,
     }
 
     expect(reduceOperands(combined)([single]).toString()).toBe('SINGLE')
@@ -68,6 +70,7 @@ describe('librarian / parser', () => {
     it.each([
       // Plain term
       ['Blue', '"Blue"'],
+      [' Blue ', '"Blue"'],
       ['"Blue"', '"Blue"'],
       ['("Blue")', '"Blue"'],
       // AND

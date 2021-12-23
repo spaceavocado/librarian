@@ -56,7 +56,7 @@ describe('librarian / core', () => {
           ],
         ],
       ])(
-        'plain term %p in context %p should be evaluated as %s',
+        'plain term %p in context %p should be executed as %s',
         (needle, context, expected) => {
           expect(plainTerm(needle)(context)).toStrictEqual(expected)
         }
@@ -126,14 +126,14 @@ describe('librarian / core', () => {
           [{ index: 11, length: 4, match: 'bot?', term: 'b?t\\?' }],
         ],
       ])(
-        'advanced term %p in context %p should be evaluated as %s',
+        'advanced term %p in context %p should be executed as %s',
         (needle, context, expected) => {
           expect(advancedTerm(needle)(context)).toStrictEqual(expected)
         }
       )
     })
 
-    describe('evaluate', () => {
+    describe('execute', () => {
       it.each([
         ['Blue', 'Red', false],
         [
@@ -142,17 +142,29 @@ describe('librarian / core', () => {
           [{ index: 9, length: 6, match: 'center', term: 'cent*' }],
         ],
       ])(
-        'term %p in context %p should be evaluated as %s',
+        'term %p in context %p should be executed as %s',
         (needle, context, expected) => {
-          expect(term(needle).evaluate(context)).toStrictEqual(expected)
+          expect(term(needle).execute(context)).toStrictEqual(expected)
         }
       )
 
       it.each([['Blue', jest.fn(), false]])(
-        'term %p with tap %p should be evaluated as %s',
+        'term %p with tap %p should be executed as %s',
         (needle, tap, expected) => {
-          expect(term(needle).evaluate('', tap)).toStrictEqual(expected)
+          expect(term(needle).execute('', tap)).toStrictEqual(expected)
           expect(tap.mock.calls[0][1]).toStrictEqual(expected)
+        }
+      )
+    })
+
+    describe('test', () => {
+      it.each([
+        ['Blue', 'Red', false],
+        ['cent*', 'The city center', true],
+      ])(
+        'term %p in context %p should be tested as %s',
+        (needle, context, expected) => {
+          expect(term(needle).test(context)).toStrictEqual(expected)
         }
       )
     })

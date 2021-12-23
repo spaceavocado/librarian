@@ -1,31 +1,46 @@
+import { NOT, not } from '..'
 import { Evaluable, Serializable } from '../Evaluable'
-import { NOT, not } from '../not'
 
 describe('librarian / core', () => {
   describe('not', () => {
     const yes: Evaluable = {
       id: Symbol(),
       kind: NOT,
-      evaluate: () => [],
+      execute: () => [],
+      test: () => false,
       toString: () => 'Yes',
     }
-    const no: Evaluable = { id: Symbol(), kind: NOT, evaluate: () => false }
+    const no: Evaluable = {
+      id: Symbol(),
+      kind: NOT,
+      execute: () => false,
+      test: () => false,
+    }
 
-    describe('evaluate', () => {
+    describe('execute', () => {
       it.each([
         [yes, false],
         [no, []],
-      ])('operand %p should be evaluated as %s', (operand, expected) => {
-        expect(not(operand).evaluate('')).toStrictEqual(expected)
+      ])('operand %p should be executed as %s', (operand, expected) => {
+        expect(not(operand).execute('')).toStrictEqual(expected)
       })
 
       it.each([[yes, jest.fn(), false]])(
-        'operand %p with tap %p should be evaluated as %s',
+        'operand %p with tap %p should be executed as %s',
         (operand, tap, expected) => {
-          expect(not(operand).evaluate('', tap)).toStrictEqual(expected)
+          expect(not(operand).execute('', tap)).toStrictEqual(expected)
           expect(tap.mock.calls[0][1]).toStrictEqual(expected)
         }
       )
+    })
+
+    describe('test', () => {
+      it.each([
+        [yes, false],
+        [no, true],
+      ])('operand %p should be tested as %s', (operand, expected) => {
+        expect(not(operand).test('')).toStrictEqual(expected)
+      })
     })
 
     describe('toString', () => {

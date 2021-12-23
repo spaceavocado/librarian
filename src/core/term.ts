@@ -90,11 +90,14 @@ export const term = (term: string): Evaluable =>
   ((id, evaluate) => ({
     id,
     kind: TERM,
-    toString: (format = (term) => `"${term}"`) => format(term),
-    evaluate: function (context, onEvaluation) {
+    execute: function (context, onEvaluation) {
       return pipe(
         evaluate,
         onEvaluation ? tap((result) => onEvaluation(this, result)) : identity
       )(context)
     },
+    test: function (context) {
+      return this.execute(context) !== false
+    },
+    toString: (format = (term) => `"${term}"`) => format(term),
   }))(Symbol(TERM), isAdvancedTerm(term) ? advancedTerm(term) : plainTerm(term))
