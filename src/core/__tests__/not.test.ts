@@ -19,8 +19,8 @@ describe('librarian / core', () => {
 
     describe('execute', () => {
       it.each([
-        [yes, false],
         [no, []],
+        [yes, false],
       ])('operand %p should be executed as %s', (operand, expected) => {
         expect(not(operand).execute('')).toStrictEqual(expected)
       })
@@ -36,8 +36,8 @@ describe('librarian / core', () => {
 
     describe('test', () => {
       it.each([
-        [yes, false],
         [no, true],
+        [yes, false],
       ])('operand %p should be tested as %s', (operand, expected) => {
         expect(not(operand).test('')).toStrictEqual(expected)
       })

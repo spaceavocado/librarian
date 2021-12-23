@@ -15,9 +15,13 @@ const execute =
 
 export const OR = 'OR'
 
-export const or = (...operands: Evaluable[]): Evaluable =>
-  ((id) => ({
-    id,
+export const or = (...operands: Evaluable[]): Evaluable => {
+  if (operands.length < 2) {
+    throw new Error('logical OR expression must have at least 2 operands')
+  }
+
+  return {
+    id: Symbol(OR),
     kind: OR,
     descendants: operands,
     execute: function (context, onEvaluation) {
@@ -33,4 +37,5 @@ export const or = (...operands: Evaluable[]): Evaluable =>
       format = (...operands) =>
         `(${operands.map((operand) => operand.toString()).join(' OR ')})`
     ) => format(...operands),
-  }))(Symbol(OR))
+  }
+}

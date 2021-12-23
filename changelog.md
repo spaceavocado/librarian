@@ -1,5 +1,10 @@
 # Librarian changelog
 
+## 0.3.0
+
+- Add logical NOR operator.
+- Add logical XOR operator.
+
 ## 0.2.0
 
 - Add test method to evaluable.

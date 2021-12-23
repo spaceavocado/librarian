@@ -2,30 +2,34 @@ import { identity, pipe, tap } from '../internal'
 import { Evaluable, Evaluation } from './Evaluable'
 import { Match } from './Match'
 
+const combine = (a: boolean, b: boolean): boolean => (a || b) && !(a && b)
+
 const execute =
   (operands: Evaluable[], onEvaluation?: Evaluation) => (context: string) => {
-    const matches: Match[] = []
+    let matches: Match[] = []
+
+    let result
     for (const operand of operands) {
       const evaluated = operand.execute(context, onEvaluation)
-      if (!evaluated) {
-        return false
+      result = combine(result ?? false, evaluated !== false)
+      if (evaluated !== false) {
+        matches = evaluated
       }
-      matches.push(...evaluated)
     }
 
-    return matches
+    return result ? matches : false
   }
 
-export const AND = 'AND'
+export const XOR = 'XOR'
 
-export const and = (...operands: Evaluable[]): Evaluable => {
+export const xor = (...operands: Evaluable[]): Evaluable => {
   if (operands.length < 2) {
-    throw new Error('logical AND expression must have at least 2 operands')
+    throw new Error('logical XOR expression must have at least 2 operands')
   }
 
   return {
-    id: Symbol(AND),
-    kind: AND,
+    id: Symbol(XOR),
+    kind: XOR,
     descendants: operands,
     execute: function (context, onEvaluation) {
       return pipe(
@@ -38,7 +42,7 @@ export const and = (...operands: Evaluable[]): Evaluable => {
     },
     toString: (
       format = (...operands) =>
-        `(${operands.map((operand) => operand.toString()).join(' AND ')})`
+        `(${operands.map((operand) => operand.toString()).join(' XOR ')})`
     ) => format(...operands),
   }
 }

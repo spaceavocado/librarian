@@ -17,17 +17,22 @@ describe('librarian / core', () => {
       test: () => false,
     }
 
+    test('constructor', () => {
+      expect(() => or()).toThrow()
+      expect(() => or(yes)).toThrow()
+    })
+
     describe('execute', () => {
       it.each([
-        [[yes], []],
-        [[no], false],
-        [[yes, no], []],
         [[no, no], false],
+        [[yes, no], []],
+        [[no, yes], []],
+        [[yes, yes], []],
       ])('operands %p should be executed as %s', (operands, expected) => {
         expect(or(...operands).execute('')).toStrictEqual(expected)
       })
 
-      it.each([[[yes], jest.fn(), []]])(
+      it.each([[[yes, yes], jest.fn(), []]])(
         'operands %p with tap %p should be executed as %s',
         (operands, tap, expected) => {
           expect(or(...operands).execute('', tap)).toStrictEqual(expected)
@@ -38,10 +43,10 @@ describe('librarian / core', () => {
 
     describe('test', () => {
       it.each([
-        [[yes], true],
-        [[no], false],
-        [[yes, no], true],
         [[no, no], false],
+        [[no, yes], true],
+        [[yes, no], true],
+        [[yes, yes], true],
       ])('operands %p should be tested as %s', (operands, expected) => {
         expect(or(...operands).test('')).toStrictEqual(expected)
       })

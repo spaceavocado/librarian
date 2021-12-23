@@ -1,31 +1,28 @@
 import { identity, pipe, tap } from '../internal'
 import { Evaluable, Evaluation } from './Evaluable'
-import { Match } from './Match'
 
 const execute =
   (operands: Evaluable[], onEvaluation?: Evaluation) => (context: string) => {
-    const matches: Match[] = []
     for (const operand of operands) {
       const evaluated = operand.execute(context, onEvaluation)
-      if (!evaluated) {
+      if (evaluated !== false) {
         return false
       }
-      matches.push(...evaluated)
     }
 
-    return matches
+    return []
   }
 
-export const AND = 'AND'
+export const NOR = 'NOR'
 
-export const and = (...operands: Evaluable[]): Evaluable => {
+export const nor = (...operands: Evaluable[]): Evaluable => {
   if (operands.length < 2) {
-    throw new Error('logical AND expression must have at least 2 operands')
+    throw new Error('logical NOR expression must have at least 2 operands')
   }
 
   return {
-    id: Symbol(AND),
-    kind: AND,
+    id: Symbol(NOR),
+    kind: NOR,
     descendants: operands,
     execute: function (context, onEvaluation) {
       return pipe(
@@ -38,7 +35,7 @@ export const and = (...operands: Evaluable[]): Evaluable => {
     },
     toString: (
       format = (...operands) =>
-        `(${operands.map((operand) => operand.toString()).join(' AND ')})`
+        `(${operands.map((operand) => operand.toString()).join(' NOR ')})`
     ) => format(...operands),
   }
 }

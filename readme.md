@@ -40,8 +40,8 @@ type Evaluable = {
 - `EvaluationResult: false` = Not matches found within the context.
 
 ```ts
-import { term, and, or, not, parse } from '@spaceavocado/librarian'
-// term(), and(), or(), not(), parse() return an "Evaluable"
+import { term, and, or, not, nor, xor, parse } from '@spaceavocado/librarian'
+// term(), and(), or(), nor(), xor(), not(), parse() return an "Evaluable"
 ```
 
 ### Raw Expression Parsing
@@ -133,11 +133,11 @@ The NASA Juno mission, which began orbiting Jupiter in July 2016, just recently 
 
 **Search expression 1:** `"nasa" AND "mission" AND "ganymede"`
 
-- _Result_: **Found**, all terms are present in the search context.
+- _Result_: **Match**, all terms are present in the search context.
 
 **Search expression 2:** `"nasa" AND "august"`
 
-- _Result_: **NOT Found**, "nasa" is present within the search context, but "august" is not.
+- _Result_: **No Match**, "nasa" is present within the search context, but "august" is not.
 
 #### Usage
 
@@ -164,23 +164,93 @@ The NASA Juno mission, which began orbiting Jupiter in July 2016, just recently 
 
 **Search expression 1:** `"nasa" OR "mission" OR "ganymede"`
 
-- _Result_: **Found**, all terms are present in the search context.
+- _Result_: **Match**, all terms are present in the search context.
 
 **Search expression 2:** `"nasa" AND "august"`
 
-- _Result_: **Found**, "nasa" is present within the search context, "august" is not, but at least one term is present.
+- _Result_: **Match**, "nasa" is present within the search context, "august" is not, but at least one term is present.
 
 **Search expression 3:** `"spacex" AND "august"`
 
-- _Result_: **NOT Found**, "spacex" nor "august" is present within the search context.
+- _Result_: **No Match**, "spacex" nor "august" is present within the search context.
 
 #### Usage
 
 ```ts
 import { term, or } from '@spaceavocado/librarian'
 
-const search = and(term('new york'), term('berlin')).execute
+const search = or(term('new york'), term('berlin')).execute
 const search = parse('"new york" OR "berlin"').execute
+
+const result = search("Christie visited the New York's city center last week.")
+```
+
+### NOR (Negative OR)
+
+Requires no terms to be found within the search context.
+
+#### Examples
+
+_Search Context:_
+
+```
+The NASA Juno mission, which began orbiting Jupiter in July 2016, just recently made its 38th close flyby of the gas giant. The mission was extended earlier this year, adding on a flyby of Jupiter's moon Ganymede in June.
+```
+
+**Search expression 1:** `"nasa" NOR "mission" NOR "ganymede"`
+
+- _Result_: **NO Match**, "nasa" is present within the search context.
+
+**Search expression 2:** `"spacex" NOR "year"`
+
+- _Result_: **NO Match**, "year" is present within the search context.
+
+**Search expression 3:** `"spacex" NOR "august"`
+
+- _Result_: **Match**, "spacex" nor "august" is present within the search context.
+
+#### Usage
+
+```ts
+import { term, nor } from '@spaceavocado/librarian'
+
+const search = nor(term('new york'), term('berlin')).execute
+const search = parse('"new york" NOR "berlin"').execute
+
+const result = search("Christie visited the New York's city center last week.")
+```
+
+### XOR (Exclusive OR)
+
+Requires exactly one term to be found within the search context.
+
+#### Examples
+
+_Search Context:_
+
+```
+The NASA Juno mission, which began orbiting Jupiter in July 2016, just recently made its 38th close flyby of the gas giant. The mission was extended earlier this year, adding on a flyby of Jupiter's moon Ganymede in June.
+```
+
+**Search expression 1:** `"nasa" XOR "mission" XOR "august"`
+
+- _Result_: **NO Match**, "nasa" and "mission" is present within the search context.
+
+**Search expression 2:** `"spacex" XOR "august"`
+
+- _Result_: **NO Match**, "spacex" nor "august" is present within the search context.
+
+**Search expression 3:** `"spacex" XOR "august" XOR "mission"`
+
+- _Result_: **Match**, only "mission" is present within the search context.
+
+#### Usage
+
+```ts
+import { term, xor } from '@spaceavocado/librarian'
+
+const search = xor(term('new york'), term('berlin')).execute
+const search = parse('"new york" XOR "berlin"').execute
 
 const result = search("Christie visited the New York's city center last week.")
 ```
@@ -199,19 +269,19 @@ The NASA Juno mission, which began orbiting Jupiter in July 2016, just recently 
 
 **Search expression 1:** `NOT "spacex"`
 
-- _Result_: **Found**, "spacex" is NOT present in the search context.
+- _Result_: **Match**, "spacex" is NOT present in the search context.
 
 **Search expression 2:** `NOT "nasa"`
 
-- _Result_: **NOT Found**, "nasa" is present in the search context.
+- _Result_: **No Match**, "nasa" is present in the search context.
 
 **Search expression 3:** `"nasa" AND NOT "spacex"`
 
-- _Result_: **Found**, "nasa" is present, and "spacex" is NOT present in the search context.
+- _Result_: **Match**, "nasa" is present, and "spacex" is NOT present in the search context.
 
 **Search expression 3:** `"nasa" AND NOT ("spacex" OR "galactic")`
 
-- _Result_: **Found**, "nasa" is present, and "spacex" or "galactic" are NOT present in the search context.
+- _Result_: **Match**, "nasa" is present, and "spacex" or "galactic" are NOT present in the search context.
 
 #### Usage
 
@@ -225,9 +295,9 @@ const search = parse('"new york" AND NOT ("center" AND NOT "week")').execute
 const result = search("Christie visited the New York's city center last week.")
 ```
 
-### AND and OR Exclusiveness Within the Same Scope
+### AND, OR, XOR, NOR Exclusiveness Within the Same Scope
 
-`AND` and `OR` operators cannot be mixed within the same expression scope, they could be combined only within different scope of the search expression. See [Search Expression Scoping/Nesting](#search-expression-scopingnesting) for more details.
+`AND`, `OR`, `NOR`, `XOR` operators cannot be mixed within the same expression scope, they could be combined only within different scope of the search expression. See [Search Expression Scoping/Nesting](#search-expression-scopingnesting) for more details.
 
 **Examples:**
 

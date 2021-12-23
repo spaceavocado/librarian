@@ -34,11 +34,11 @@ describe('librarian / parser', () => {
       }
     )
 
-    it.each([['AND', 'OR']])(
+    it.each([['AND', 'OR', 'XOR', 'NOR']])(
       'exclusive operator, with previous %p state, changing to &p state should throw an error',
       (previous, pending) => {
         expect(() => setExclusiveOperator(true)(previous, pending)).toThrow(
-          'exclusive logical operators cannot be combined within the same scope'
+          'logical operators (AND, OR, XOR, NOR) cannot be combined within the same scope'
         )
       }
     )
@@ -79,6 +79,12 @@ describe('librarian / parser', () => {
       // OR
       ['"Blue" OR "City"', '("Blue" OR "City")'],
       ['"Blue" OR "City" OR "Dog"', '("Blue" OR "City" OR "Dog")'],
+      // NOR
+      ['"Blue" NOR "City"', '("Blue" NOR "City")'],
+      ['"Blue" NOR "City" NOR "Dog"', '("Blue" NOR "City" NOR "Dog")'],
+      // XOR
+      ['"Blue" XOR "City"', '("Blue" XOR "City")'],
+      ['"Blue" XOR "City" XOR "Dog"', '("Blue" XOR "City" XOR "Dog")'],
       // NOT
       ['NOT "Blue"', 'NOT "Blue"'],
       // Scopes
@@ -115,7 +121,7 @@ describe('librarian / parser', () => {
       // Mixed logical terms within the same scope
       [
         '"Blue" AND "Red" OR "Yellow"',
-        'exclusive logical operators cannot be combined within the same scope',
+        'logical operators (AND, OR, XOR, NOR) cannot be combined within the same scope',
       ],
       // Unterminated term, hard error
       ['"Blue', 'invalid syntax: "Blue'],
