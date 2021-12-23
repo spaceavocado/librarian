@@ -15,6 +15,10 @@ yarn add @spaceavocado/librarian
 
 > The library is being build as **CommonJS** module and **ESM**.
 
+## Online Sandbox
+
+The library could be tested in the online sandbox [https://librarian-sandbox.web.app/](https://librarian-sandbox.web.app/).
+
 ## Usage
 
 An evaluable search expression could be created directly from the evaluable core expression functions or parsed from the raw expression input.
