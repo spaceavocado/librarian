@@ -24,7 +24,7 @@ describe('librarian / core', () => {
         ['Bl?e', true],
         ['Bl\\?e', false],
       ])('term %p in advanced term: %p', (term, expected) => {
-        expect(isAdvancedTerm(term)).toStrictEqual(expected)
+        expect(isAdvancedTerm('\\')('*', '?')(term)).toStrictEqual(expected)
       })
     })
 
@@ -35,8 +35,8 @@ describe('librarian / core', () => {
         ['*color', '\\w+color'],
         ['c*lor', 'c\\w+lor'],
         ['c*l\\*r', 'c\\w+l\\*r'],
-        ['col??', 'col..'],
-        ['col?\\?', 'col.\\?'],
+        ['col??', 'col\\w\\w'],
+        ['col?\\?', 'col\\w\\?'],
       ])('advanced term %p in rx form: %p', (term, expected) => {
         expect(advancedTermRx(term)).toStrictEqual(expected)
       })
