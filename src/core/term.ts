@@ -2,16 +2,19 @@ import { identity, pipe, replace, tap } from '../internal'
 import { Evaluable } from './Evaluable'
 import { Match } from './Match'
 
-export const isAdvancedTerm = (term: string): boolean => {
-  let tail = term[0] ?? ''
-  for (const char of term) {
-    if (tail !== '\\' && (char === '*' || char === '?')) {
-      return true
+export const isAdvancedTerm =
+  (escapeChar: string) =>
+  (...specialChars: string[]) =>
+  (term: string): boolean => {
+    let tail = term[0] ?? ''
+    for (const char of term) {
+      if (tail !== escapeChar && specialChars.includes(char)) {
+        return true
+      }
+      tail = char
     }
-    tail = char
+    return false
   }
-  return false
-}
 
 export const advancedTermRx = (term: string): string =>
   // Escaped wildcard characters are preserved via a temporary
@@ -23,7 +26,7 @@ export const advancedTermRx = (term: string): string =>
     replace(/\\\?/g, '\xBD'),
     replace(/\*{2,}/g, '*'),
     replace(/\*/g, '\\w+'),
-    replace(/\?/g, '.'),
+    replace(/\?/g, '\\w'),
     replace(/\xBC/g, '\\*'),
     replace(/\xBD/g, '\\?')
   )(term)
@@ -108,4 +111,7 @@ export const term = (term: string): Evaluable =>
       return this.execute(context) !== false
     },
     toString: (format = (term) => `"${term}"`) => format(term),
-  }))(Symbol(TERM), isAdvancedTerm(term) ? advancedTerm(term) : plainTerm(term))
+  }))(
+    Symbol(TERM),
+    isAdvancedTerm('\\')('*', '?')(term) ? advancedTerm(term) : plainTerm(term)
+  )

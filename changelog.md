@@ -1,5 +1,9 @@
 # Librarian changelog
 
+## 0.3.3
+
+- (?) matches any word character (equivalent to [a-zA-Z0-9_]).
+
 ## 0.3.1
 
 - Evaluation Result now represents an empty Match array as true.

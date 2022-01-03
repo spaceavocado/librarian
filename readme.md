@@ -2,7 +2,7 @@
 
 A micro search library leveraging [Boolean Operators](https://library.alliant.edu/screens/boolean.pdf), supporting [wildcard](https://apus.libanswers.com/faq/2235) annotation within search terms.
 
-> Revision: Dec 22, 2021.
+> Revision: Jan 3, 2022.
 
 ## Installation
 
@@ -336,7 +336,7 @@ const result = search("Christie visited the New York's city center last week.")
 
 A question mark (?) may be used to represent a single character, anywhere in the word. It is most useful when there are variable spellings for a word, and you want to search for all variants at once.For example, searching for colo?r would return both color and colour.
 
-**Note:** (?) matches any character (except for line terminators)
+**Note:** (?) matches any word character (equivalent to `[a-zA-Z0-9_]`)
 
 **Examples:**
 
