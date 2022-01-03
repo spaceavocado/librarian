@@ -1,6 +1,6 @@
 import { Evaluable } from './Evaluable';
 import { Match } from './Match';
-export declare const isAdvancedTerm: (term: string) => boolean;
+export declare const isAdvancedTerm: (escapeChar: string) => (...specialChars: string[]) => (term: string) => boolean;
 export declare const advancedTermRx: (term: string) => string;
 export declare const plainTerm: (term: string) => (context: string) => false | Match[];
 export declare const advancedTerm: (term: string) => (context: string) => false | Match[];
