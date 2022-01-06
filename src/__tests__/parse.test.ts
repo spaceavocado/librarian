@@ -106,8 +106,8 @@ describe('librarian / parser', () => {
         '(("santa" OR "house") OR ("missing" OR "sky??"))',
       ],
       // Escaping
-      ['"Blue \\"jack\\" bird"', '"Blue \\"jack\\" bird"'],
-      ['"\\"Blue"', '"\\"Blue"'],
+      ['"Blue \\"jack\\" bird"', '"Blue "jack" bird"'],
+      ['"\\"Blue"', '""Blue"'],
       // Edge cases - Non-terminating
       ['"Blue" AND "Peter', '"Blue"'],
       ['"Blue" AND (())', '"Blue"'],
