@@ -66,115 +66,116 @@ const defaultOptions: ParseOptions = {
 export const parse = (
   input: string,
   options: Partial<ParseOptions> = defaultOptions
-): Evaluable => {
-  const operators: Record<string, Operator> = {
-    [AND_OPERATOR]: {
-      combine: () => (operands) =>
-        reduceOperands((operands) => and(...operands))(operands),
-      add: identity,
-      exclusive: true,
-    },
-    [OR_OPERATOR]: {
-      combine: () => (operands) =>
-        reduceOperands((operands) => or(options.exhaustiveOr)(...operands))(
-          operands
-        ),
-      add: identity,
-      exclusive: true,
-    },
-    [NOR_OPERATOR]: {
-      combine: () => (operands) =>
-        reduceOperands((operands) => nor(...operands))(operands),
-      add: identity,
-      exclusive: true,
-    },
-    [XOR_OPERATOR]: {
-      combine: () => (operands) =>
-        reduceOperands((operands) => xor(...operands))(operands),
-      add: identity,
-      exclusive: true,
-    },
-    [NOT_OPERATOR]: {
-      combine: identity,
-      add: () => (operand) => not(operand),
-      exclusive: false,
-    },
-  }
-
-  const scope = (input: string): [Evaluable, number] => {
-    const operands: Evaluable[] = []
-    let combine: Combine = (operands) => operands[0]
-    let add: Add = identity
-    let termBuffer: string | null = null
-    let operatorBuffer: string | null = null
-    let exclusiveOperator: string | undefined
-
-    const addOperand = (operand: Evaluable) => {
-      operands.push(add(operand))
-      add = identity
+): Evaluable =>
+  ((options) => {
+    const operators: Record<string, Operator> = {
+      [AND_OPERATOR]: {
+        combine: () => (operands) =>
+          reduceOperands((operands) => and(...operands))(operands),
+        add: identity,
+        exclusive: true,
+      },
+      [OR_OPERATOR]: {
+        combine: () => (operands) =>
+          reduceOperands((operands) => or(options.exhaustiveOr)(...operands))(
+            operands
+          ),
+        add: identity,
+        exclusive: true,
+      },
+      [NOR_OPERATOR]: {
+        combine: () => (operands) =>
+          reduceOperands((operands) => nor(...operands))(operands),
+        add: identity,
+        exclusive: true,
+      },
+      [XOR_OPERATOR]: {
+        combine: () => (operands) =>
+          reduceOperands((operands) => xor(...operands))(operands),
+        add: identity,
+        exclusive: true,
+      },
+      [NOT_OPERATOR]: {
+        combine: identity,
+        add: () => (operand) => not(operand),
+        exclusive: false,
+      },
     }
 
-    let position = 0
-    for (; position < input.length; position++) {
-      const char = input[position]
-      if (
-        char === TERM_END &&
-        termBuffer !== null &&
-        input[position - 1] !== ESCAPE_CHAR
-      ) {
-        addOperand(term(termBuffer))
-        termBuffer = null
-        continue
+    const scope = (input: string): [Evaluable, number] => {
+      const operands: Evaluable[] = []
+      let combine: Combine = (operands) => operands[0]
+      let add: Add = identity
+      let termBuffer: string | null = null
+      let operatorBuffer: string | null = null
+      let exclusiveOperator: string | undefined
+
+      const addOperand = (operand: Evaluable) => {
+        operands.push(add(operand))
+        add = identity
       }
 
-      if (char === TERM_START && termBuffer === null) {
-        termBuffer = ''
-        continue
-      }
-      if (termBuffer !== null) {
-        termBuffer += char
-        continue
+      let position = 0
+      for (; position < input.length; position++) {
+        const char = input[position]
+        if (
+          char === TERM_END &&
+          termBuffer !== null &&
+          input[position - 1] !== ESCAPE_CHAR
+        ) {
+          addOperand(term(termBuffer))
+          termBuffer = null
+          continue
+        }
+
+        if (char === TERM_START && termBuffer === null) {
+          termBuffer = ''
+          continue
+        }
+        if (termBuffer !== null) {
+          termBuffer += char
+          continue
+        }
+
+        operatorBuffer = readOperatorBuffer(operatorBuffer, char)
+
+        if (operatorBuffer && operators[operatorBuffer]) {
+          exclusiveOperator = setExclusiveOperator(
+            operators[operatorBuffer].exclusive
+          )(exclusiveOperator, operatorBuffer)
+
+          combine = operators[operatorBuffer].combine(combine)
+          add = operators[operatorBuffer].add(add)
+          operatorBuffer = null
+          continue
+        }
+
+        if (char === SCOPE_START) {
+          const [inner, endsAt] = scope(input.substring(position + 1))
+          addOperand(inner)
+          position += endsAt
+        }
+        if (char === SCOPE_END) {
+          position++
+          break
+        }
       }
 
-      operatorBuffer = readOperatorBuffer(operatorBuffer, char)
-
-      if (operatorBuffer && operators[operatorBuffer]) {
-        exclusiveOperator = setExclusiveOperator(
-          operators[operatorBuffer].exclusive
-        )(exclusiveOperator, operatorBuffer)
-
-        combine = operators[operatorBuffer].combine(combine)
-        add = operators[operatorBuffer].add(add)
-        operatorBuffer = null
-        continue
-      }
-
-      if (char === SCOPE_START) {
-        const [inner, endsAt] = scope(input.substring(position + 1))
-        addOperand(inner)
-        position += endsAt
-      }
-      if (char === SCOPE_END) {
-        position++
-        break
-      }
+      return [combine(operands), position]
     }
 
-    return [combine(operands), position]
-  }
+    input = input.trim()
+    // unscoped plain term, e.g: "term", auto-scoped, i.e.: "\"term\""
+    input = /^["(][")]$|^[^\s][")]$|^["(][^\s]$/.test(
+      input[0] + input[input.length - 1]
+    )
+      ? input
+      : TERM_START + input + TERM_END
 
-  input = input.trim()
-  // unscoped plain term, e.g: "term", auto-scoped, i.e.: "\"term\""
-  input = /^["(][")]$|^[^\s][")]$|^["(][^\s]$/.test(
-    input[0] + input[input.length - 1]
-  )
-    ? input
-    : TERM_START + input + TERM_END
+    const parsed = scope(input)[0]
+    if (!parsed) {
+      throw new Error(`invalid syntax: ${input}`)
+    }
 
-  const parsed = scope(input)[0]
-  if (!parsed) {
-    throw new Error(`invalid syntax: ${input}`)
-  }
-
-  return parsed
-}
+    return parsed
+  })(Object.assign(defaultOptions, options))
