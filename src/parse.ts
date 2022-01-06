@@ -1,5 +1,5 @@
 import { and, Evaluable, nor, not, or, term, xor } from './core'
-import { identity } from './internal'
+import { identity, pipe, replace } from './internal'
 
 const TERM_START = '"'
 const TERM_END = '"'
@@ -11,6 +11,9 @@ const OR_OPERATOR = 'OR'
 const NOR_OPERATOR = 'NOR'
 const XOR_OPERATOR = 'XOR'
 const NOT_OPERATOR = 'NOT'
+
+const termStartRx = new RegExp('\\' + ESCAPE_CHAR + TERM_START)
+const termEndRx = new RegExp('\\' + ESCAPE_CHAR + TERM_END)
 
 export const readOperatorBuffer = (
   buffer: string | null,
@@ -123,7 +126,13 @@ export const parse = (
           termBuffer !== null &&
           input[position - 1] !== ESCAPE_CHAR
         ) {
-          addOperand(term(termBuffer))
+          addOperand(
+            pipe(
+              replace(termStartRx, TERM_START),
+              replace(termEndRx, TERM_END),
+              term
+            )(termBuffer)
+          )
           termBuffer = null
           continue
         }
