@@ -14,8 +14,8 @@ describe('librarian / core', () => {
     const match = { index: 0, length: 0, match: 'match', term: 'match' }
 
     test('constructor', () => {
-      expect(() => or()).toThrow()
-      expect(() => or(evaluable(true))).toThrow()
+      expect(() => or()()).toThrow()
+      expect(() => or()(evaluable(true))).toThrow()
     })
 
     describe('execute', () => {
@@ -27,14 +27,26 @@ describe('librarian / core', () => {
         [[evaluable(true), evaluable(true)], true],
         [[evaluable([match]), evaluable([match])], [match]],
       ])('operands %p should be executed as %s', (operands, expected) => {
-        expect(or(...operands).execute('')).toStrictEqual(expected)
+        expect(or()(...operands).execute('')).toStrictEqual(expected)
       })
 
       it.each([[[evaluable(true), evaluable(true)], jest.fn(), true]])(
         'operands %p with tap %p should be executed as %s',
         (operands, tap, expected) => {
-          expect(or(...operands).execute('', tap)).toStrictEqual(expected)
+          expect(or()(...operands).execute('', tap)).toStrictEqual(expected)
           expect(tap.mock.calls[0][1]).toStrictEqual(expected)
+        }
+      )
+
+      it.each([
+        [
+          [evaluable([match]), evaluable([match])],
+          [match, match],
+        ],
+      ])(
+        'operands %p should be executed as %s exhaustivelly',
+        (operands, expected) => {
+          expect(or(true)(...operands).execute('')).toStrictEqual(expected)
         }
       )
     })
@@ -46,7 +58,7 @@ describe('librarian / core', () => {
         [[evaluable(true), evaluable(false)], true],
         [[evaluable(true), evaluable(true)], true],
       ])('operands %p should be tested as %s', (operands, expected) => {
-        expect(or(...operands).test('')).toStrictEqual(expected)
+        expect(or()(...operands).test('')).toStrictEqual(expected)
       })
     })
 
@@ -59,7 +71,7 @@ describe('librarian / core', () => {
           'Evaluable || Evaluable',
         ],
       ])('format %p should be produce %s', (format, expected) => {
-        expect(or(evaluable(true), evaluable(true)).toString(format)).toBe(
+        expect(or()(evaluable(true), evaluable(true)).toString(format)).toBe(
           expected
         )
       })

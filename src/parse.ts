@@ -50,39 +50,57 @@ export const reduceOperands =
       operands.filter(identity)
     )
 
-const operators: Record<string, Operator> = {
-  [AND_OPERATOR]: {
-    combine: () => (operands) =>
-      reduceOperands((operands) => and(...operands))(operands),
-    add: identity,
-    exclusive: true,
-  },
-  [OR_OPERATOR]: {
-    combine: () => (operands) =>
-      reduceOperands((operands) => or(...operands))(operands),
-    add: identity,
-    exclusive: true,
-  },
-  [NOR_OPERATOR]: {
-    combine: () => (operands) =>
-      reduceOperands((operands) => nor(...operands))(operands),
-    add: identity,
-    exclusive: true,
-  },
-  [XOR_OPERATOR]: {
-    combine: () => (operands) =>
-      reduceOperands((operands) => xor(...operands))(operands),
-    add: identity,
-    exclusive: true,
-  },
-  [NOT_OPERATOR]: {
-    combine: identity,
-    add: () => (operand) => not(operand),
-    exclusive: false,
-  },
+export type ParseOptions = {
+  /**
+   * logical OR expression will evaluate all evaluable regardless possible short-circuiting.
+   * This may be handle to find/highlight all matches. The applies only on the execute function
+   * not on the test function.
+   */
+  exhaustiveOr: boolean
 }
 
-export const parse = (input: string): Evaluable => {
+const defaultOptions: ParseOptions = {
+  exhaustiveOr: false,
+}
+
+export const parse = (
+  input: string,
+  options: Partial<ParseOptions> = defaultOptions
+): Evaluable => {
+  const operators: Record<string, Operator> = {
+    [AND_OPERATOR]: {
+      combine: () => (operands) =>
+        reduceOperands((operands) => and(...operands))(operands),
+      add: identity,
+      exclusive: true,
+    },
+    [OR_OPERATOR]: {
+      combine: () => (operands) =>
+        reduceOperands((operands) => or(options.exhaustiveOr)(...operands))(
+          operands
+        ),
+      add: identity,
+      exclusive: true,
+    },
+    [NOR_OPERATOR]: {
+      combine: () => (operands) =>
+        reduceOperands((operands) => nor(...operands))(operands),
+      add: identity,
+      exclusive: true,
+    },
+    [XOR_OPERATOR]: {
+      combine: () => (operands) =>
+        reduceOperands((operands) => xor(...operands))(operands),
+      add: identity,
+      exclusive: true,
+    },
+    [NOT_OPERATOR]: {
+      combine: identity,
+      add: () => (operand) => not(operand),
+      exclusive: false,
+    },
+  }
+
   const scope = (input: string): [Evaluable, number] => {
     const operands: Evaluable[] = []
     let combine: Combine = (operands) => operands[0]

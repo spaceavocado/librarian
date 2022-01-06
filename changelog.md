@@ -1,5 +1,9 @@
 # Librarian changelog
 
+## 0.4.0
+
+- Logical OR operator could be now flagged as exhaustive, i.e. performing all evaluation without short-circuiting.
+
 ## 0.3.3
 
 - (?) matches any word character (equivalent to [a-zA-Z0-9_]).

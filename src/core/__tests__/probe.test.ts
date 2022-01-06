@@ -8,7 +8,7 @@ describe('librarian / core', () => {
   describe('probe', () => {
     const e0 = term('dog')
     const e1 = term('green')
-    const e2 = or(e0, e1)
+    const e2 = or()(e0, e1)
 
     describe('combine', () => {
       it.each<[Evaluable, Record<symbol, EvaluationResult>, ProbeResult]>([

@@ -2,7 +2,7 @@
 
 A micro search library leveraging [Boolean Operators](https://library.alliant.edu/screens/boolean.pdf), supporting [wildcard](https://apus.libanswers.com/faq/2235) annotation within search terms.
 
-> Revision: Jan 3, 2022.
+> Revision: Jan 6, 2022.
 
 ## Installation
 
@@ -180,8 +180,18 @@ The NASA Juno mission, which began orbiting Jupiter in July 2016, just recently 
 ```ts
 import { term, or } from '@spaceavocado/librarian'
 
-const search = or(term('new york'), term('berlin')).execute
-const search = parse('"new york" OR "berlin"').execute
+// Should the OR expression perform exhaustive matching?
+// - Exhaustive matching is useful to highlight all matches
+//   within the search context.
+// - Not-exhaustive matching, i.e. short-circuiting is better
+//   from optimization perspective. (default option for OR).
+const exhaustive = false
+const parseOptions = {
+  exhaustiveOr: false,
+}
+
+const search = or(exhaustive)(term('new york'), term('berlin')).execute
+const search = parse('"new york" OR "berlin"', parseOptions).execute
 
 const result = search("Christie visited the New York's city center last week.")
 ```
@@ -450,6 +460,7 @@ const [result1, probeData1] = search("Christie visited the New York's city cente
 ```
 
 - `result: Match[]` = Matches found within the context.
+- `result: true` = Matching within the context.
 - `result: false` = Not matches found within the context.
 - `result: undefined` = The evaluable has not been executed, i.e this expression branch has not been needed to be executed.
 
