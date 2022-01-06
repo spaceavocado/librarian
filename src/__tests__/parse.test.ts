@@ -107,6 +107,10 @@ describe('librarian / parser', () => {
       ],
       // Escaping
       ['"Blue \\"jack\\" bird"', '"Blue "jack" bird"'],
+      [
+        '"Blue \\"jack\\" and \\"eliot\\" bird"',
+        '"Blue "jack" and "eliot" bird"',
+      ],
       ['"\\"Blue"', '""Blue"'],
       // Edge cases - Non-terminating
       ['"Blue" AND "Peter', '"Blue"'],

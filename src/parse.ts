@@ -12,8 +12,8 @@ const NOR_OPERATOR = 'NOR'
 const XOR_OPERATOR = 'XOR'
 const NOT_OPERATOR = 'NOT'
 
-const termStartRx = new RegExp('\\' + ESCAPE_CHAR + TERM_START)
-const termEndRx = new RegExp('\\' + ESCAPE_CHAR + TERM_END)
+const termStartRx = new RegExp('\\' + ESCAPE_CHAR + TERM_START, 'g')
+const termEndRx = new RegExp('\\' + ESCAPE_CHAR + TERM_END, 'g')
 
 export const readOperatorBuffer = (
   buffer: string | null,
