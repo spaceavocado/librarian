@@ -1,4 +1,4 @@
-import { identity, pipe, replace, tap } from '../internal'
+import { identity, pipe, replace, tap, toLower } from '../internal'
 import { Evaluable } from './Evaluable'
 import { Match } from './Match'
 
@@ -55,7 +55,7 @@ export const plainTerm =
       }
 
       return matches.length ? matches : false
-    })(term.toLowerCase(), context.toLowerCase())
+    })(pipe(toLower, replace(/\\(\*|\?)/g, '$1'))(term), context.toLowerCase())
 
 export const advancedTerm =
   (term: string) =>

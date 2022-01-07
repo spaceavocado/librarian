@@ -58,6 +58,25 @@ describe('librarian / core', () => {
             { index: 18, length: 3, match: 'Dog', term: 'dog' },
           ],
         ],
+        ['Blue\\*', 'Blues', false],
+        [
+          'Blue\\*',
+          'Blue*',
+          [{ index: 0, length: 5, match: 'Blue*', term: 'Blue\\*' }],
+        ],
+        ['Blue\\? and Red\\?', 'Blues and Reds', false],
+        [
+          'Blue\\? and Red\\?',
+          'Blue? and Red?',
+          [
+            {
+              index: 0,
+              length: 14,
+              match: 'Blue? and Red?',
+              term: 'Blue\\? and Red\\?',
+            },
+          ],
+        ],
       ])(
         'plain term %p in context %p should be executed as %s',
         (needle, context, expected) => {
