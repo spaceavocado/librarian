@@ -16,6 +16,7 @@ export {
 export type {
   Match,
   ProbeResult,
+  Evaluable,
   EvaluationResult,
   Evaluation,
   Serializable,
